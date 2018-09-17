@@ -47,14 +47,12 @@ public class SecurePayment extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (url.contains("/3dReturn")) {
-                  
-				  
+                  //As per your requirements here
                     return true;
                 }
                 return false;
             }
         });
-
         webView.loadUrl(getIntent().getStringExtra("frameUrl"));
     }
 

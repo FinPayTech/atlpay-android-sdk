@@ -8,6 +8,22 @@ public class Card {
     private String cardNumber, name, cvc;
     private int expMonth, expYear;
     private String addressLine1, addressLine2, city, state, zipcode, country;
+    private String ipAddress, uuId;
+    public String getIpAddress() {
+        return ipAddress;
+    }
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getUuId() {
+        return uuId;
+    }
+
+    public void setUuId(String uuId) {
+        this.uuId = uuId;
+    }
+
 
     public String getCardNumber() {
         return cardNumber;

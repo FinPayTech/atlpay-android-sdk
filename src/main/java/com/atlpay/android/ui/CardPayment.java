@@ -1,5 +1,4 @@
-package com.atlpay.android.activity;
-
+package com.atlpay.android.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,7 @@ import java.net.URL;
 
 import static java.lang.Integer.parseInt;
 
-public class Payment extends AppCompatActivity implements OnCardFormSubmitListener,
+public class CardPayment extends AppCompatActivity implements OnCardFormSubmitListener,
         CardEditText.OnCardTypeChangedListener, View.OnClickListener {
     private static final CardType[] SUPPORTED_CARD_TYPES = {CardType.VISA, CardType.MASTERCARD, CardType.DISCOVER,
             CardType.AMEX, CardType.DINERS_CLUB};
@@ -63,7 +62,7 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = Payment.this;
+        mContext = CardPayment.this;
         card = new Card();
         setContentView(R.layout.activity_payment);
         initFields();
@@ -79,7 +78,7 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
                 .mobileNumberRequired(false)
                 .mobileNumberExplanation("SMS is required on this number")
                 .actionLabel("Pay")
-                .setup(Payment.this);
+                .setup(CardPayment.this);
         mCardForm.setOnCardFormSubmitListener(this);
         mCardForm.setOnCardTypeChangedListener(this);
         // Warning: this is for development purposes only and should never be done outside of this example app.
@@ -90,7 +89,7 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
         setCart(0.00, "", "", "");
     }
     private void initFields() {
-        mProgressDialog = new ProgressDialog(Payment.this);
+        mProgressDialog = new ProgressDialog(CardPayment.this);
         mProgressDialog.setMessage(getString(R.string.please_wait));
     }
     public void setCart(double amount, String currency, String orderNumber, String orderDescription) {
@@ -98,15 +97,12 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
         this.currency = currency;
         this.orderNumber = orderNumber;
         this.orderDescription = orderDescription;
-        this.payText = "PAY";
-        submitBtn.setText(payText);
     }
     public void setListener() {
         submitBtn.setOnClickListener(this);
     }
     public void resetBtn() {
         submitBtn.setEnabled(true);
-        submitBtn.setText(payText);
     }
     private void submit() {
         mProgressDialog.show();
@@ -114,11 +110,9 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
         submitBtn.setText(getResources().getString(R.string.please_wait));
         submitBtn.setEnabled(false);
         ATLPay.setSecretKey("");////////PLACE_YOUR_SECRET_KEY_HERE
-        ipAddress = Config.getIpAddress(mContext);
-        uuid = Config.uniqueID(mContext);
         token = new Token(mContext);
         //PLACE_EMAIL_ID_HERE..........
-        token.create(card,ipAddress,uuid,"", new ATLPayObserver() {
+        token.create(card,"", new ATLPayObserver() {
                     @Override
                     public void onRequestSuccess() {
                         mProgressDialog.dismiss();
@@ -135,7 +129,7 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
     }
     private void initOrder() {
         String tokenId = token.getId();
-        order = new Order(Payment.this);
+        order = new Order(CardPayment.this);
         order.setTokenId(tokenId);
         order.setAmount(amount);
         order.setCurrency(currency);
@@ -165,7 +159,7 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
             order.capture(order.getId(), new ATLPayObserver() {
                 @Override
                 public void onRequestSuccess() {
-                    //Call Server to Consolidate Amount
+                    //As per your requirement or send to the DataBase or Success page.
                 }
                 @Override
                 public void onRequestFailure(ATLPayError atlPayError) {
@@ -188,13 +182,13 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
                     } else {
                         Constants.displayToast(mContext, atlPayError.message, true);
                     }
-                    Intent mIntent = new Intent(mContext, PaymentActivity.class);
+                    Intent mIntent = new Intent(mContext, CardPayment.class);
                     startActivity(mIntent);
                     finish();
                 }
             });
         } else {
-            Intent intent = new Intent(Payment.this, SecurePayment.class);
+            Intent intent = new Intent(CardPayment.this, SecurePayment.class);
             intent.putExtra("frameUrl", order.getAuthUrl());
             startActivity(intent);
             finish();
@@ -208,6 +202,8 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
             card.setExpYear(parseInt(mCardForm.getExpirationYear()));
             card.setCvc(mCardForm.getCvv());
             card.setName(mCardForm.getName());
+            card.setIpAddress(ipAddress=Config.getIpAddress(mContext));
+            card.setUuId(uuid =Config.uniqueID(mContext));
             submit();
         } else {
             mCardForm.validate();
@@ -226,7 +222,7 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         if (item.getItemId() == R.id.card_io_item) {
-            mCardForm.scanCard(Payment.this);
+            mCardForm.scanCard(CardPayment.this);
             return true;
         }
         return false;
@@ -242,6 +238,8 @@ public class Payment extends AppCompatActivity implements OnCardFormSubmitListen
                 card.setExpYear(parseInt(mCardForm.getExpirationYear()));
                 card.setCvc(mCardForm.getCvv());
                 card.setName(mCardForm.getName());
+                card.setIpAddress(ipAddress = Config.getIpAddress(mContext));
+                card.setUuId(uuid = Config.uniqueID(mContext));
                 submit();
             } else {
                 mCardForm.validate();

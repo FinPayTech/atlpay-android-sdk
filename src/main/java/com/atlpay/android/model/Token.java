@@ -58,7 +58,7 @@ public class Token implements ATLPayObserver {
         return this.redirectStatus;
     }
 
-    public void create(Card card,String ipAddress,String uuid,String userEmailId, ATLPayObserver atlPayObserver){
+    public void create(Card card,String userEmailId, ATLPayObserver atlPayObserver){
         this.atlPayObserver = atlPayObserver;
         HashMap<String, String> payloadParams  =   new HashMap<String, String>();
         payloadParams.put("card[number]",card.getCardNumber());
@@ -72,8 +72,8 @@ public class Token implements ATLPayObserver {
         payloadParams.put("address[state]", card.getState());
         payloadParams.put("address[country]", card.getCountry());
         payloadParams.put("address[zipcode]", card.getZipcode());
-        payloadParams.put("shopper[ip]", ipAddress);
-        payloadParams.put("shopper[session_id]",uuid);
+        payloadParams.put("shopper[ip]", card.getIpAddress());
+        payloadParams.put("shopper[session_id]",card.getUuId());
         payloadParams.put("shopper[email]",userEmailId);
         Request tokenRequest    =   new Request(this.mContext);
         String endPoint = Constants.endPoint + "/tokens";
