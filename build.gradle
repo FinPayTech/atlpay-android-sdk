@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -26,6 +25,7 @@ android {
         enabled = false
     }
 }
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
@@ -36,6 +36,5 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'io.card:android-sdk:[5.5.0,6.0.0)'
-    implementation 'com.leo.simplearcloader:simplearcloader:1.0.3'
     testImplementation 'junit:junit:4.12'
 }
