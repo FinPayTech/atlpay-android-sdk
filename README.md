@@ -12,7 +12,14 @@ The ATLPay Android SDK makes it easy to add atlpay payments to mobile apps.
 	}
    }
 ```
+# Adding a ATLPay Android SDK In Your App
 
+* app/build.gradle add a dependency in the form:
+```java
+   dependencies {
+    implementation project(':atlpay-android-sdk')
+}
+```
 ## Requirements
  minimum Android 4.1 (API Level 16).
 # Usage
